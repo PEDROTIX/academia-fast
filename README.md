@@ -1,0 +1,2 @@
+# academia-fast
+qr code
