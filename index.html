@@ -1,0 +1,794 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Academia de Bachata - Sistema de Registro</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+            padding: 20px;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        .card {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            animation: slideUp 0.5s ease-out;
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .nav-tabs {
+            display: flex;
+            margin-bottom: 30px;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .nav-tab {
+            flex: 1;
+            padding: 15px 20px;
+            background: #f8f9fa;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            color: #666;
+        }
+
+        .nav-tab.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .nav-tab:hover:not(.active) {
+            background: #e9ecef;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #555;
+        }
+
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e1e5e9;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group input:focus, .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #56ab2f 0%, #a8e6cf 100%);
+            color: white;
+        }
+
+        .btn-warning {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+        }
+
+        .btn-info {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+        }
+
+        .student-card {
+            border: 2px solid #e1e5e9;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 15px;
+            transition: all 0.3s ease;
+        }
+
+        .student-card:hover {
+            border-color: #667eea;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .student-info {
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 20px;
+            align-items: center;
+        }
+
+        .student-details h3 {
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .student-details p {
+            color: #666;
+            margin-bottom: 3px;
+        }
+
+        .qr-container {
+            text-align: center;
+        }
+
+        .qr-code {
+            margin: 20px 0;
+        }
+
+        .welcome-screen {
+            text-align: center;
+            padding: 40px 20px;
+        }
+
+        .welcome-screen h2 {
+            color: #333;
+            font-size: 2em;
+            margin-bottom: 20px;
+        }
+
+        .user-info {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 25px;
+            margin: 20px 0;
+        }
+
+        .user-info h3 {
+            color: #667eea;
+            margin-bottom: 15px;
+        }
+
+        .membership-status {
+            display: inline-block;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 14px;
+            margin-top: 10px;
+        }
+
+        .status-active {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-expired {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .payment-options {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .payment-option {
+            background: white;
+            border: 2px solid #e1e5e9;
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .payment-option:hover {
+            border-color: #667eea;
+            transform: translateY(-2px);
+        }
+
+        .payment-option h4 {
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        .payment-option .price {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        .success-message {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        .alert {
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+
+        .alert-info {
+            background: #d1ecf1;
+            border: 1px solid #bee5eb;
+            color: #0c5460;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+            
+            .header h1 {
+                font-size: 2em;
+            }
+            
+            .nav-tabs {
+                flex-direction: column;
+            }
+            
+            .student-info {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+            
+            .payment-options {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🕺💃 Academia de Bachata</h1>
+            <p>Sistema Profesional de Registro</p>
+        </div>
+
+        <div class="card">
+            <div class="nav-tabs">
+                <button class="nav-tab active" onclick="showTab('admin')">Panel Admin</button>
+                <button class="nav-tab" onclick="showTab('checkin')">Check-in</button>
+            </div>
+
+            <!-- Panel de Administración -->
+            <div id="admin" class="tab-content active">
+                <h2>Panel de Administración</h2>
+                
+                <div class="form-group">
+                    <label>Nombre:</label>
+                    <input type="text" id="studentName" placeholder="Nombre del estudiante">
+                </div>
+                
+                <div class="form-group">
+                    <label>Apellidos:</label>
+                    <input type="text" id="studentLastName" placeholder="Apellidos">
+                </div>
+                
+                <div class="form-group">
+                    <label>Teléfono:</label>
+                    <input type="tel" id="studentPhone" placeholder="+34 600 000 000">
+                </div>
+                
+                <div class="form-group">
+                    <label>Email:</label>
+                    <input type="email" id="studentEmail" placeholder="email@ejemplo.com">
+                </div>
+                
+                <button class="btn btn-primary" onclick="addStudent()">
+                    ➕ Agregar Estudiante
+                </button>
+
+                <div id="studentsList" style="margin-top: 30px;"></div>
+            </div>
+
+            <!-- Sistema de Check-in -->
+            <div id="checkin" class="tab-content">
+                <div id="checkinForm">
+                    <h2>Sistema de Check-in</h2>
+                    <div class="alert alert-info">
+                        <strong>Simulación:</strong> Selecciona un estudiante para simular el escaneo de su código QR personal.
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Seleccionar estudiante:</label>
+                        <select id="studentSelect" onchange="simulateQRScan()">
+                            <option value="">-- Selecciona un estudiante --</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div id="welcomeScreen" style="display: none;">
+                    <!-- Aquí se mostrará la pantalla de bienvenida -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Base de datos en memoria
+        let students = [];
+        let currentStudent = null;
+
+        // Inicializar con datos de ejemplo
+        function initializeData() {
+            students = [
+                {
+                    id: 1,
+                    name: "María",
+                    lastName: "García López",
+                    phone: "+34 612 345 678",
+                    email: "maria.garcia@email.com",
+                    membership: "active",
+                    membershipExpiry: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
+                    classesRemaining: 0
+                },
+                {
+                    id: 2,
+                    name: "Carlos",
+                    lastName: "Rodríguez Silva",
+                    phone: "+34 698 765 432",
+                    email: "carlos.rodriguez@email.com",
+                    membership: "expired",
+                    membershipExpiry: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000),
+                    classesRemaining: 2
+                }
+            ];
+            updateStudentsList();
+            updateStudentSelect();
+        }
+
+        function showTab(tabName) {
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelectorAll('.nav-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.getElementById(tabName).classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        function addStudent() {
+            const name = document.getElementById('studentName').value.trim();
+            const lastName = document.getElementById('studentLastName').value.trim();
+            const phone = document.getElementById('studentPhone').value.trim();
+            const email = document.getElementById('studentEmail').value.trim();
+
+            if (!name || !lastName || !phone || !email) {
+                alert('Por favor, completa todos los campos');
+                return;
+            }
+
+            const student = {
+                id: Date.now(),
+                name,
+                lastName,
+                phone,
+                email,
+                membership: "expired",
+                membershipExpiry: new Date(Date.now() - 24 * 60 * 60 * 1000),
+                classesRemaining: 0
+            };
+
+            students.push(student);
+            updateStudentsList();
+            updateStudentSelect();
+
+            // Limpiar formulario
+            document.getElementById('studentName').value = '';
+            document.getElementById('studentLastName').value = '';
+            document.getElementById('studentPhone').value = '';
+            document.getElementById('studentEmail').value = '';
+        }
+
+        function updateStudentsList() {
+            const container = document.getElementById('studentsList');
+            container.innerHTML = '';
+
+            if (students.length === 0) {
+                container.innerHTML = '<p style="text-align: center; color: #666; margin-top: 20px;">No hay estudiantes registrados</p>';
+                return;
+            }
+
+            students.forEach(student => {
+                const studentCard = document.createElement('div');
+                studentCard.className = 'student-card';
+                
+                const membershipStatus = student.membership === 'active' && student.membershipExpiry > new Date() ? 'Activa' : 'Expirada';
+                const statusClass = membershipStatus === 'Activa' ? 'status-active' : 'status-expired';
+
+                studentCard.innerHTML = `
+                    <div class="student-info">
+                        <div class="student-details">
+                            <h3>${student.name} ${student.lastName}</h3>
+                            <p>📱 ${student.phone}</p>
+                            <p>✉️ ${student.email}</p>
+                            <p>🎫 Clases restantes: ${student.classesRemaining}</p>
+                            <span class="membership-status ${statusClass}">
+                                Membresía: ${membershipStatus}
+                            </span>
+                        </div>
+                        <div class="qr-container">
+                            <div class="qr-code" id="qr-${student.id}"></div>
+                            <button class="btn btn-info btn-sm" onclick="generateQR(${student.id})">
+                                🔄 Generar QR
+                            </button>
+                        </div>
+                    </div>
+                `;
+                
+                container.appendChild(studentCard);
+            });
+        }
+
+        function updateStudentSelect() {
+            const select = document.getElementById('studentSelect');
+            select.innerHTML = '<option value="">-- Selecciona un estudiante --</option>';
+            
+            students.forEach(student => {
+                const option = document.createElement('option');
+                option.value = student.id;
+                option.textContent = `${student.name} ${student.lastName}`;
+                select.appendChild(option);
+            });
+        }
+
+        function generateQR(studentId) {
+            const student = students.find(s => s.id === studentId);
+            if (!student) return;
+
+            const qrContainer = document.getElementById(`qr-${studentId}`);
+            qrContainer.innerHTML = '<div style="text-align: center; color: #666;">Generando QR...</div>';
+            
+            // Obtener la URL actual del sitio
+            const currentUrl = window.location.href.replace(/\/[^\/]*$/, '');
+            const qrData = `${currentUrl}?checkin=${student.id}&name=${encodeURIComponent(student.name + ' ' + student.lastName)}`;
+            
+            // Usar API de QR Code Generator
+            const qrApiUrl = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(qrData)}`;
+            
+            // Crear imagen del QR
+            const img = document.createElement('img');
+            img.src = qrApiUrl;
+            img.alt = `QR Code para ${student.name}`;
+            img.style.width = '150px';
+            img.style.height = '150px';
+            img.style.border = '1px solid #ddd';
+            img.style.borderRadius = '8px';
+            
+            img.onload = function() {
+                qrContainer.innerHTML = '';
+                qrContainer.appendChild(img);
+                
+                // Agregar texto debajo del QR
+                const qrText = document.createElement('p');
+                qrText.style.fontSize = '12px';
+                qrText.style.color = '#666';
+                qrText.style.marginTop = '8px';
+                qrText.style.textAlign = 'center';
+                qrText.textContent = `ID: ${student.id}`;
+                qrContainer.appendChild(qrText);
+            };
+            
+            img.onerror = function() {
+                // Si falla la API, mostrar QR visual de fallback
+                qrContainer.innerHTML = `
+                    <div style="width: 150px; height: 150px; border: 2px solid #667eea; border-radius: 8px; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; font-size: 14px; color: #667eea; background: #f8f9ff; margin: 0 auto;">
+                        <div style="font-size: 24px; margin-bottom: 8px;">📱</div>
+                        <div style="font-weight: bold;">QR CODE</div>
+                        <div style="font-size: 12px; margin-top: 5px;">ID: ${student.id}</div>
+                        <div style="font-size: 10px; margin-top: 3px; opacity: 0.7;">${student.name}</div>
+                    </div>
+                `;
+            };
+        }
+
+        function simulateQRScan() {
+            const studentId = document.getElementById('studentSelect').value;
+            if (!studentId) {
+                document.getElementById('welcomeScreen').style.display = 'none';
+                document.getElementById('checkinForm').style.display = 'block';
+                return;
+            }
+
+            const student = students.find(s => s.id == studentId);
+            if (!student) return;
+
+            currentStudent = student;
+            showWelcomeScreen(student);
+        }
+
+        function showWelcomeScreen(student) {
+            document.getElementById('checkinForm').style.display = 'none';
+            
+            const welcomeScreen = document.getElementById('welcomeScreen');
+            const membershipActive = student.membership === 'active' && student.membershipExpiry > new Date();
+            const hasClasses = student.classesRemaining > 0;
+
+            let content = `
+                <div class="welcome-screen">
+                    <h2>¡Bienvenid@ de vuelta! 🎉</h2>
+                    <div class="user-info">
+                        <h3>👤 ${student.name} ${student.lastName}</h3>
+                        <p><strong>📱 Teléfono:</strong> ${student.phone}</p>
+                        <p><strong>✉️ Email:</strong> ${student.email}</p>
+                        <p><strong>🎫 Clases restantes:</strong> ${student.classesRemaining}</p>
+            `;
+
+            if (membershipActive) {
+                content += `
+                    <span class="membership-status status-active">
+                        ✅ Membresía Activa hasta ${student.membershipExpiry.toLocaleDateString()}
+                    </span>
+                    </div>
+                    <div class="success-message">
+                        <h3>¡Perfecto! 🎊</h3>
+                        <p>Tu membresía está activa. ¡Disfruta tu clase de bachata!</p>
+                    </div>
+                    <button class="btn btn-success" onclick="checkinComplete()">
+                        ✅ Confirmar Check-in
+                    </button>
+                `;
+            } else if (hasClasses) {
+                content += `
+                    <span class="membership-status status-expired">
+                        ⏰ Membresía Expirada
+                    </span>
+                    </div>
+                    <div class="success-message">
+                        <h3>¡Genial! 🎵</h3>
+                        <p>Tienes ${student.classesRemaining} clase(s) disponible(s). ¡A bailar!</p>
+                    </div>
+                    <button class="btn btn-success" onclick="useClass()">
+                        🎯 Usar 1 Clase
+                    </button>
+                `;
+            } else {
+                content += `
+                    <span class="membership-status status-expired">
+                        ⏰ Membresía Expirada - Sin clases disponibles
+                    </span>
+                    </div>
+                    <h3 style="margin-top: 20px;">Selecciona tu opción de pago:</h3>
+                    <div class="payment-options">
+                        <div class="payment-option" onclick="selectPayment('2classes')">
+                            <h4>2 Clases</h4>
+                            <div class="price">25€</div>
+                            <p>Válido por 1 mes</p>
+                        </div>
+                        <div class="payment-option" onclick="selectPayment('social')">
+                            <h4>Pase Social</h4>
+                            <div class="price">15€</div>
+                            <p>Solo práctica libre</p>
+                        </div>
+                        <div class="payment-option" onclick="selectPayment('membership')">
+                            <h4>Membresía</h4>
+                            <div class="price">45€</div>
+                            <p>Ilimitado por 1 mes</p>
+                        </div>
+                    </div>
+                `;
+            }
+
+            content += `
+                    <button class="btn btn-warning" onclick="backToCheckin()" style="margin-top: 20px;">
+                        🔙 Volver
+                    </button>
+                </div>
+            `;
+
+            welcomeScreen.innerHTML = content;
+            welcomeScreen.style.display = 'block';
+        }
+
+        function selectPayment(option) {
+            let message = '';
+            let price = '';
+            
+            switch(option) {
+                case '2classes':
+                    message = '2 Clases';
+                    price = '25€';
+                    currentStudent.classesRemaining = 2;
+                    break;
+                case 'social':
+                    message = 'Pase Social';
+                    price = '15€';
+                    break;
+                case 'membership':
+                    message = 'Membresía Mensual';
+                    price = '45€';
+                    currentStudent.membership = 'active';
+                    currentStudent.membershipExpiry = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
+                    break;
+            }
+
+            // Actualizar estudiante en la base de datos
+            const studentIndex = students.findIndex(s => s.id === currentStudent.id);
+            if (studentIndex !== -1) {
+                students[studentIndex] = currentStudent;
+                updateStudentsList();
+            }
+
+            document.getElementById('welcomeScreen').innerHTML = `
+                <div class="welcome-screen">
+                    <h2>¡Pago Completado! 💳</h2>
+                    <div class="success-message">
+                        <h3>Gracias por tu compra 🎉</h3>
+                        <p><strong>Opción seleccionada:</strong> ${message}</p>
+                        <p><strong>Importe:</strong> ${price}</p>
+                    </div>
+                    <div class="user-info">
+                        <p>✅ Pago procesado exitosamente</p>
+                        <p>🎵 ¡Disfruta tu clase de bachata!</p>
+                    </div>
+                    <button class="btn btn-success" onclick="checkinComplete()">
+                        🚀 Completar Check-in
+                    </button>
+                    <button class="btn btn-warning" onclick="backToCheckin()" style="margin-left: 10px;">
+                        🔙 Volver al inicio
+                    </button>
+                </div>
+            `;
+        }
+
+        function useClass() {
+            currentStudent.classesRemaining--;
+            
+            // Actualizar estudiante en la base de datos
+            const studentIndex = students.findIndex(s => s.id === currentStudent.id);
+            if (studentIndex !== -1) {
+                students[studentIndex] = currentStudent;
+                updateStudentsList();
+            }
+
+            document.getElementById('welcomeScreen').innerHTML = `
+                <div class="welcome-screen">
+                    <h2>¡Check-in Completado! ✅</h2>
+                    <div class="success-message">
+                        <h3>¡Perfecto! 🎊</h3>
+                        <p>Se ha descontado 1 clase de tu paquete</p>
+                        <p><strong>Clases restantes:</strong> ${currentStudent.classesRemaining}</p>
+                    </div>
+                    <div class="user-info">
+                        <p>🎵 ¡Que disfrutes tu clase de bachata!</p>
+                        <p>💃🕺 ¡A bailar se ha dicho!</p>
+                    </div>
+                    <button class="btn btn-primary" onclick="backToCheckin()">
+                        🔙 Finalizar
+                    </button>
+                </div>
+            `;
+        }
+
+        function checkinComplete() {
+            document.getElementById('welcomeScreen').innerHTML = `
+                <div class="welcome-screen">
+                    <h2>¡Bienvenid@! 🎉</h2>
+                    <div class="success-message">
+                        <h3>Check-in completado exitosamente ✅</h3>
+                        <p>¡Que disfrutes tu clase de bachata!</p>
+                    </div>
+                    <div class="user-info">
+                        <p>🎵 La música te espera</p>
+                        <p>💃🕺 ¡A bailar!</p>
+                    </div>
+                    <button class="btn btn-primary" onclick="backToCheckin()">
+                        🔙 Finalizar
+                    </button>
+                </div>
+            `;
+        }
+
+        function backToCheckin() {
+            document.getElementById('welcomeScreen').style.display = 'none';
+            document.getElementById('checkinForm').style.display = 'block';
+            document.getElementById('studentSelect').value = '';
+            currentStudent = null;
+        }
+
+        // Inicializar la aplicación cuando la página cargue
+        window.onload = function() {
+            initializeData();
+            
+            // Si viene de un QR, procesar el check-in automático
+            const urlParams = new URLSearchParams(window.location.search);
+            const checkinId = urlParams.get('checkin');
+            if (checkinId) {
+                // Cambiar a la pestaña de check-in
+                document.querySelectorAll('.nav-tab').forEach(tab => tab.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+                document.getElementById('checkin').classList.add('active');
+                document.querySelector('[onclick="showTab(\'checkin\')"]').classList.add('active');
+                
+                // Buscar el estudiante y mostrar su pantalla
+                const student = students.find(s => s.id == checkinId);
+                if (student) {
+                    currentStudent = student;
+                    showWelcomeScreen(student);
+                }
+            }
+        };
+    </script>
+</body>
+</html>
